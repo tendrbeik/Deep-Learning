@@ -47,6 +47,8 @@ errors = 1
 prev_wout = np.zeros((1+hiddenSizes,outputSize))
 max_it = 2000
 it = 0
+list = []
+list.append(prev_wout)
 
 # #Вариант один
 # while errors > 0 and not((prev_wout == Wout).all()):
@@ -76,18 +78,31 @@ it = 0
 #     # sleep(0.1)
 
 #Вариант три
-while errors > 0 and not((prev_wout == Wout).all()) and it < max_it:
+def check(items,value):
+    flag = True
+    for item in items:
+        if(((item == value).all())):
+            flag = False
+            break
+    return flag
+
+while errors > 0 and check(list,Wout) and it < max_it:
     errors = 0
     it += 1
+    list.append(np.copy(Wout))
     for xi, target, j in zip(X, y, range(X.shape[0])):
         pr, hidden = predict(xi)
-        prev_wout = np.copy(Wout)
+        #prev_wout = np.copy(Wout)
         if(pr != target):
             Wout[1:] += ((eta * (target - pr)) * hidden).reshape(-1, 1)
             Wout[0] += eta * (target - pr)
             errors += 1
+        
+# array = np.array([1,0,0,0,0,0,0,1,1,1,1])
+# array = array.reshape(-1, 1)
+# print(check(list,array))
 print(errors)
-print(not((prev_wout == Wout).all()))
+#print(not((prev_wout == Wout).all()))
     
 # print(not((prev_wout == Wout).all()))
 
